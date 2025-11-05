@@ -1,0 +1,207 @@
+<!-- 
+     VISTA DE CUENTAS
+     Interfaz para gestión de Cuentas
+     -->
+
+<div class="cuentas-page">
+    <!-- Título de la página -->
+    <h1 class="page-title">Cuentas</h1>
+
+    <!-- Mensajes de éxito o error -->
+    <div ng-if="mensaje" class="alert alert-success">
+        {{ mensaje }}
+    </div>
+    <div ng-if="error" class="alert alert-error">
+        {{ error }}
+    </div>
+
+    <!-- Barra de acciones -->
+    <div class="actions-bar">
+        <!-- Campo de búsqueda rápida -->
+        <div class="search-box">
+            <input 
+                type="text" 
+                ng-model="busqueda" 
+                placeholder="Buscar por número, tipo o cliente..."
+                ng-change="buscarCuentas()">
+        </div>
+
+        <!-- Botón Nuevo (amarillo según mockup) -->
+        <button class="btn btn-new" ng-click="abrirModalNuevo()">
+            Nuevo
+        </button>
+    </div>
+
+    <!-- Loading spinner -->
+    <div ng-if="loading && !modalActivo" class="loading">
+        <div class="spinner"></div>
+        <p>Cargando...</p>
+    </div>
+
+    <!-- Tabla de cuentas -->
+    <div class="table-container" ng-if="!loading || modalActivo">
+        <table ng-if="cuentasFiltradas.length > 0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Número Cuenta</th>
+                    <th>Tipo Cuenta</th>
+                    <th>Saldo Inicial</th>
+                    <th>Cliente</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="cuenta in cuentasFiltradas">
+                    <td>{{ cuenta.cuentaId }}</td>
+                    <td>{{ cuenta.numeroCuenta }}</td>
+                    <td>{{ cuenta.tipoCuenta }}</td>
+                    <td>${{ cuenta.saldoInicial | number:2 }}</td>
+                    <td>{{ obtenerNombreCliente(cuenta.clienteId) }}</td>
+                    <td>
+                        <span class="badge" ng-class="cuenta.estado ? 'badge-active' : 'badge-inactive'">
+                            {{ cuenta.estado ? 'Activa' : 'Inactiva' }}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" ng-click="abrirModalEditar(cuenta)">
+                            Editar
+                        </button>
+                        <button class="btn btn-danger btn-sm" ng-click="eliminarCuenta(cuenta)">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Mensaje cuando no hay datos -->
+        <div ng-if="cuentasFiltradas.length === 0" class="no-data">
+            <p ng-if="busqueda">No se encontraron cuentas con el término: "{{ busqueda }}"</p>
+            <p ng-if="!busqueda">No hay cuentas registradas. Haga clic en "Nuevo" para agregar una.</p>
+        </div>
+    </div>
+
+    <!-- Modal para crear/editar cuenta -->
+    <div class="modal" ng-class="{'active': modalActivo}">
+        <div class="modal-content">
+            <!-- Header del modal -->
+            <div class="modal-header">
+                <h2>{{ modoEdicion ? 'Editar Cuenta' : 'Nueva Cuenta' }}</h2>
+                <button class="modal-close" ng-click="cerrarModal()">&times;</button>
+            </div>
+
+            <!-- Body del modal -->
+            <div class="modal-body">
+                <!-- Mensajes dentro del modal -->
+                <div ng-if="error" class="alert alert-error">
+                    {{ error }}
+                </div>
+
+                <!-- Formulario -->
+                <form name="cuentaForm" novalidate>
+                    <!-- Cliente -->
+                    <div class="form-group">
+                        <label for="clienteId">Cliente *</label>
+                        <select 
+                            id="clienteId" 
+                            name="clienteId"
+                            ng-model="nuevaCuenta.clienteId" 
+                            required
+                            ng-disabled="modoEdicion">
+                            <option value="">-- Seleccione un cliente --</option>
+                            <option ng-repeat="cliente in clientes" value="{{ cliente.clienteId }}">
+                                {{ cliente.nombre }} ({{ cliente.identificacion }})
+                            </option>
+                        </select>
+                        <small ng-if="modoEdicion" style="color: #7f8c8d;">
+                            El cliente no se puede modificar
+                        </small>
+                    </div>
+
+                    <!-- Número de Cuenta -->
+                    <div class="form-group">
+                        <label for="numeroCuenta">Número de Cuenta *</label>
+                        <input 
+                            type="text" 
+                            id="numeroCuenta" 
+                            name="numeroCuenta"
+                            ng-model="nuevaCuenta.numeroCuenta" 
+                            required
+                            ng-disabled="modoEdicion"
+                            placeholder="Ej: 478758">
+                        <small ng-if="modoEdicion" style="color: #7f8c8d;">
+                            El número de cuenta no se puede modificar
+                        </small>
+                    </div>
+
+                    <!-- Tipo de Cuenta -->
+                    <div class="form-group">
+                        <label for="tipoCuenta">Tipo de Cuenta *</label>
+                        <select 
+                            id="tipoCuenta" 
+                            name="tipoCuenta"
+                            ng-model="nuevaCuenta.tipoCuenta" 
+                            required>
+                            <option value="Corriente">Corriente</option>
+                            <option value="Ahorros">Ahorros</option>
+                        </select>
+                    </div>
+
+                    <!-- Saldo Inicial -->
+                    <div class="form-group">
+                        <label for="saldoInicial">Saldo Inicial *</label>
+                        <input
+                            type="number"
+                            id="saldoInicial"
+                            name="saldoInicial"
+                            ng-model="nuevaCuenta.saldoInicial"
+                            min="0"
+                            step="0.01"
+                            required
+                            ng-disabled="modoEdicion"
+                            placeholder="Ej: 1000.00">
+                        <small ng-if="modoEdicion" style="color: #7f8c8d;">
+                            El saldo inicial no se puede modificar
+                        </small>
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="form-group">
+                        <div class="toggle-switch-container">
+                            <span class="toggle-switch-label">Estado de la Cuenta</span>
+                            <div style="display: flex; align-items: center;">
+                                <label class="toggle-switch">
+                                    <input
+                                        type="checkbox"
+                                        id="estado"
+                                        name="estado"
+                                        ng-model="nuevaCuenta.estado">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-status-text" ng-class="nuevaCuenta.estado ? 'active' : 'inactive'">
+                                    {{ nuevaCuenta.estado ? 'Activa' : 'Inactiva' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Footer del modal -->
+            <div class="modal-footer">
+                <button class="btn btn-secondary" ng-click="cerrarModal()">
+                    Cancelar
+                </button>
+                <button 
+                    class="btn btn-success" 
+                    ng-click="guardarCuenta()"
+                    ng-disabled="loading">
+                    <span ng-if="!loading">{{ modoEdicion ? 'Actualizar' : 'Guardar' }}</span>
+                    <span ng-if="loading">Guardando...</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

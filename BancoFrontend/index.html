@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html ng-app="bancoApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BANCO - Sistema Bancario</title>
+    
+    <!-- Estilos personalizados (sin frameworks) -->
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header Principal -->
+    <header class="main-header">
+        <h1>BANCO</h1>
+    </header>
+
+    <!-- Container Principal -->
+    <div class="main-container">
+        <!-- Menú Lateral -->
+        <nav class="sidebar">
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="#/clientes" ng-class="{'active': currentPage === 'clientes'}">
+                        Clientes
+                    </a>
+                </li>
+                <li>
+                    <a href="#/cuentas" ng-class="{'active': currentPage === 'cuentas'}">
+                        Cuentas
+                    </a>
+                </li>
+                <li>
+                    <a href="#/movimientos" ng-class="{'active': currentPage === 'movimientos'}">
+                        Movimientos
+                    </a>
+                </li>
+                <li>
+                    <a href="#/reportes" ng-class="{'active': currentPage === 'reportes'}">
+                        Reportes
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Área de Contenido Principal -->
+        <main class="content-area">
+            <!-- Aquí se cargan las vistas según la ruta -->
+            <div ng-view></div>
+        </main>
+    </div>
+
+    <!-- AngularJS 1.3.2 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular-route.min.js"></script>
+
+    <!-- Aplicación Principal -->
+    <script src="app/app.js"></script>
+
+    <!-- Servicios -->
+    <script src="app/services/modalService.js"></script>
+    <script src="app/services/clienteService.js"></script>
+    <script src="app/services/cuentaService.js"></script>
+    <script src="app/services/movimientoService.js"></script>
+    <script src="app/services/reporteService.js"></script>
+
+    <!-- Controladores -->
+    <script src="app/controllers/clientesController.js"></script>
+    <script src="app/controllers/cuentasController.js"></script>
+    <script src="app/controllers/movimientosController.js"></script>
+    <script src="app/controllers/reportesController.js"></script>
+</body>
+</html>

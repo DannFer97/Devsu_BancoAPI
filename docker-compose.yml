@@ -1,0 +1,59 @@
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: banco-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - banco-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${SA_PASSWORD} -Q \"SELECT 1\" -C || exit 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+
+  bancoapi:
+    build:
+      context: ./BancoBackend
+      dockerfile: Dockerfile
+    container_name: banco-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+    ports:
+      - "5000:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - banco-network
+    restart: on-failure
+
+  bancofrontend:
+    build:
+      context: ./BancoFrontend
+      dockerfile: Dockerfile
+    container_name: banco-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - bancoapi
+    networks:
+      - banco-network
+    restart: on-failure
+
+volumes:
+  sqlserver-data:
+    driver: local
+
+networks:
+  banco-network:
+    driver: bridge

@@ -1,0 +1,227 @@
+<!-- 
+     VISTA DE REPORTES
+     Interfaz para generación de Reportes
+     
+      -->
+
+<div class="reportes-page">
+    <!-- Título de la página -->
+    <h1 class="page-title">Reportes - Estado de Cuenta</h1>
+
+    <!-- Mensajes de éxito o error -->
+    <div ng-if="mensaje" class="alert alert-success">
+         {{ mensaje }}
+    </div>
+    <div ng-if="error" class="alert alert-error">
+         {{ error }}
+    </div>
+
+    <!-- Formulario de filtros -->
+    <div class="filtros-container" style="background-color: #ecf0f1; padding: 25px; border-radius: 8px; margin-bottom: 30px;">
+        <h2 style="margin-top: 0; color: #2c3e50;"> Filtros de Búsqueda</h2>
+        
+        <form name="filtrosForm" novalidate>
+            <div class="form-row">
+                <!-- Cliente -->
+                <div class="form-group">
+                    <label for="clienteId">Cliente *</label>
+                    <select 
+                        id="clienteId" 
+                        name="clienteId"
+                        ng-model="filtros.clienteId" 
+                        required>
+                        <option value="">-- Seleccione un cliente --</option>
+                        <option ng-repeat="cliente in clientes" value="{{ cliente.clienteId }}">
+                            {{ cliente.nombre }} ({{ cliente.identificacion }})
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <!-- Fecha Inicio -->
+                <div class="form-group">
+                    <label for="fechaInicio">Fecha Inicio *</label>
+                    <input 
+                        type="date" 
+                        id="fechaInicio" 
+                        name="fechaInicio"
+                        ng-model="filtros.fechaInicio" 
+                        required>
+                </div>
+
+                <!-- Fecha Fin -->
+                <div class="form-group">
+                    <label for="fechaFin">Fecha Fin *</label>
+                    <input 
+                        type="date" 
+                        id="fechaFin" 
+                        name="fechaFin"
+                        ng-model="filtros.fechaFin" 
+                        required>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button 
+                    class="btn btn-primary" 
+                    ng-click="generarReporte()"
+                    ng-disabled="loading">
+                    <span ng-if="!loading"> Generar Reporte</span>
+                    <span ng-if="loading"> Generando...</span>
+                </button>
+
+                <button 
+                    class="btn btn-secondary" 
+                    ng-click="limpiarReporte()"
+                    ng-if="reporteGenerado">
+                     Limpiar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Loading spinner -->
+    <div ng-if="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Generando reporte...</p>
+    </div>
+
+    <!-- Resultados del reporte -->
+    <div ng-if="reporteGenerado && reporte && !loading" class="reporte-resultados">
+        <!-- Header del reporte -->
+        <div style="background-color: #d5f4e6; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #27ae60;">
+            <h2 style="margin: 0 0 15px 0; color: #145a32;"> Reporte Generado</h2>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                <div>
+                    <strong>Cliente:</strong> {{ reporte.cliente }}
+                </div>
+                <div>
+                    <strong>Período:</strong> {{ filtros.fechaInicio | date:'dd/MM/yyyy' }} al {{ filtros.fechaFin | date:'dd/MM/yyyy' }}
+                </div>
+                <div>
+                    <strong>Total Movimientos:</strong> {{ reporte.movimientos.length }}
+                </div>
+                <div>
+                    <strong>Fecha de Generación:</strong> {{ today | date:'dd/MM/yyyy HH:mm' }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de exportación -->
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button class="btn btn-success" ng-click="descargarPDF()">
+                 Descargar PDF
+            </button>
+        </div>
+
+        <!-- Tabla de movimientos -->
+        <div class="table-container">
+            <h3 style="color: #2c3e50; margin-bottom: 15px;">Detalle de Movimientos</h3>
+            
+            <table ng-if="reporte.movimientos.length > 0">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Número Cuenta</th>
+                        <th>Tipo</th>
+                        <th>Saldo Inicial</th>
+                        <th>Movimiento</th>
+                        <th>Saldo Disponible</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="mov in reporte.movimientos">
+                        <td>{{ mov.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                        <td>{{ mov.numeroCuenta }}</td>
+                        <td>{{ mov.tipo }}</td>
+                        <td>${{ mov.saldoInicial | number:2 }}</td>
+                        <td ng-class="mov.movimiento >= 0 ? 'text-success' : 'text-danger'">
+                            <strong>{{ mov.movimiento >= 0 ? '+' : '' }}${{ mov.movimiento | number:2 }}</strong>
+                        </td>
+                        <td>${{ mov.saldoDisponible | number:2 }}</td>
+                        <td>
+                            <span class="badge" ng-class="mov.estado ? 'badge-active' : 'badge-inactive'">
+                                {{ mov.estado ? 'Activa' : 'Inactiva' }}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div ng-if="reporte.movimientos.length === 0" class="no-data">
+                <p>No se encontraron movimientos para el período seleccionado</p>
+            </div>
+        </div>
+
+        <!-- Totales  -->
+        <div style="margin-top: 30px; background-color: #d5f4e6; padding: 25px; border-radius: 8px; border-left: 5px solid #27ae60;">
+            <h3 style="color: #145a32; margin-top: 0;"> Resumen de Totales</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 16px;">
+                <div style="padding: 15px; background-color: white; border-radius: 5px;">
+                    <div style="color: #7f8c8d; margin-bottom: 5px;">Total Créditos:</div>
+                    <div style="font-size: 24px; font-weight: bold; color: #27ae60;">
+                        +${{ reporte.totalCreditos | number:2 }}
+                    </div>
+                </div>
+
+                <div style="padding: 15px; background-color: white; border-radius: 5px;">
+                    <div style="color: #7f8c8d; margin-bottom: 5px;">Total Débitos:</div>
+                    <div style="font-size: 24px; font-weight: bold; color: #e74c3c;">
+                        ${{ (reporte.totalDebitos * -1) | number:2 }}
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; padding: 20px; background-color: #34495e; color: white; border-radius: 5px; text-align: center;">
+                <div style="font-size: 14px; margin-bottom: 5px;">Balance Neto del Período:</div>
+                <div style="font-size: 28px; font-weight: bold;">
+                    ${{ (reporte.totalCreditos - reporte.totalDebitos) | number:2 }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Ejemplo de formato JSON (según documento) -->
+        <div ng-if="reporte.movimientos.length > 0" style="margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+            <h3 style="color: #2c3e50; margin-top: 0;"> Ejemplo de Formato JSON (según documento)</h3>
+            <pre style="background-color: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 12px;">{
+  "Fecha": "{{ reporte.movimientos[0].fecha | date:'dd/MM/yyyy' }}",
+  "Cliente": "{{ reporte.cliente }}",
+  "Numero Cuenta": "{{ reporte.movimientos[0].numeroCuenta }}",
+  "Tipo": "{{ reporte.movimientos[0].tipo }}",
+  "Saldo Inicial": {{ reporte.movimientos[0].saldoInicial }},
+  "Estado": {{ reporte.movimientos[0].estado }},
+  "Movimiento": {{ reporte.movimientos[0].movimiento }},
+  "Saldo Disponible": {{ reporte.movimientos[0].saldoDisponible }}
+}</pre>
+            <small style="color: #7f8c8d;">
+                 Este es el formato especificado en la página 4 del documento.
+            </small>
+        </div>
+    </div>
+
+    <!-- Mensaje cuando no hay reporte -->
+    <div ng-if="!reporteGenerado && !loading" class="no-data">
+        <p> Seleccione un cliente y rango de fechas, luego haga clic en "Generar Reporte"</p>
+    </div>
+</div>
+
+<!-- Estilos adicionales para reportes -->
+<style>
+.text-success {
+    color: #27ae60 !important;
+}
+.text-danger {
+    color: #e74c3c !important;
+}
+.filtros-container h2 {
+    font-size: 20px;
+}
+.reporte-resultados h3 {
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+}
+</style>

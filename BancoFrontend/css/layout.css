@@ -1,0 +1,122 @@
+/* 
+   LAYOUT.CSS - Estructura Principal
+ 
+    */
+
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+/* 
+   HEADER PRINCIPAL
+ */
+.main-header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 15px 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.main-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+/* 
+   CONTAINER PRINCIPAL
+ */
+.main-container {
+    display: flex;
+    margin-top: 60px; /* Altura del header */
+    min-height: calc(100vh - 60px);
+}
+
+/* 
+   SIDEBAR (Menú Lateral)
+ */
+.sidebar {
+    width: 200px;
+    background-color: #ecf0f1;
+    border-right: 1px solid #bdc3c7;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 20px 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 5px;
+}
+
+.sidebar-menu a {
+    display: block;
+    padding: 12px 20px;
+    color: #2c3e50;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-menu a:hover {
+    background-color: #d5dbdb;
+    border-left-color: #3498db;
+}
+
+.sidebar-menu a.active {
+    background-color: #3498db;
+    color: white;
+    border-left-color: #2980b9;
+    font-weight: 600;
+}
+
+/* 
+   ÁREA DE CONTENIDO
+ */
+.content-area {
+    flex: 1;
+    margin-left: 200px; /* Ancho del sidebar */
+    padding: 30px;
+    background-color: white;
+    min-height: calc(100vh - 60px);
+}
+
+/* 
+   RESPONSIVE
+ */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+    }
+    
+    .content-area {
+        margin-left: 60px;
+    }
+    
+    .sidebar-menu a {
+        padding: 12px 10px;
+        text-align: center;
+        font-size: 12px;
+    }
+}

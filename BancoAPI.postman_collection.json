@@ -1,0 +1,529 @@
+{
+	"info": {
+		"_postman_id": "banco-api-devsu-2024",
+		"name": "BancoAPI - Ejercicio Técnico Devsu",
+		"description": "Colección completa para validar todos los endpoints de la API REST del sistema bancario.\n\n**Características implementadas:**\n- CRUD completo de Clientes, Cuentas y Movimientos\n- Validación de saldo disponible\n- Validación de límite diario de retiro ($1000)\n- Generación de reportes por cliente y fecha\n- Manejo de excepciones con mensajes claros\n\n**Base URL:** http://localhost:5000/api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Clientes",
+			"item": [
+				{
+					"name": "1. Obtener todos los clientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/clientes",
+							"host": ["{{base_url}}"],
+							"path": ["clientes"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Obtener cliente por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/clientes/1",
+							"host": ["{{base_url}}"],
+							"path": ["clientes", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Buscar cliente por identificación",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/clientes/identificacion/1234567890",
+							"host": ["{{base_url}}"],
+							"path": ["clientes", "identificacion", "1234567890"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Crear nuevo cliente",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Pedro García\",\n  \"genero\": \"M\",\n  \"edad\": 30,\n  \"identificacion\": \"9988776655\",\n  \"direccion\": \"Av. América 456\",\n  \"telefono\": \"0987654321\",\n  \"contrasena\": \"pass123\",\n  \"estado\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clientes",
+							"host": ["{{base_url}}"],
+							"path": ["clientes"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Actualizar cliente (PUT)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Jose Lema Actualizado\",\n  \"direccion\": \"Nueva Dirección 789\",\n  \"telefono\": \"0999888777\",\n  \"estado\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clientes/1",
+							"host": ["{{base_url}}"],
+							"path": ["clientes", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6. Actualizar parcialmente (PATCH)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"telefono\": \"0991234567\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clientes/1",
+							"host": ["{{base_url}}"],
+							"path": ["clientes", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7. Eliminar cliente",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/clientes/99",
+							"host": ["{{base_url}}"],
+							"path": ["clientes", "99"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cuentas",
+			"item": [
+				{
+					"name": "1. Obtener todas las cuentas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cuentas",
+							"host": ["{{base_url}}"],
+							"path": ["cuentas"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Obtener cuenta por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cuentas/1",
+							"host": ["{{base_url}}"],
+							"path": ["cuentas", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Buscar cuenta por número",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cuentas/numero/478758",
+							"host": ["{{base_url}}"],
+							"path": ["cuentas", "numero", "478758"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Obtener cuentas de un cliente",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cuentas/cliente/1",
+							"host": ["{{base_url}}"],
+							"path": ["cuentas", "cliente", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Crear nueva cuenta",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"numeroCuenta\": \"123456\",\n  \"tipoCuenta\": \"Ahorro\",\n  \"saldoInicial\": 5000,\n  \"clienteId\": 1,\n  \"estado\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/cuentas",
+							"host": ["{{base_url}}"],
+							"path": ["cuentas"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6. Actualizar cuenta (PUT)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tipoCuenta\": \"Corriente\",\n  \"estado\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/cuentas/1",
+							"host": ["{{base_url}}"],
+							"path": ["cuentas", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7. Eliminar cuenta",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cuentas/99",
+							"host": ["{{base_url}}"],
+							"path": ["cuentas", "99"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Movimientos",
+			"item": [
+				{
+					"name": "1. Obtener todos los movimientos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/movimientos",
+							"host": ["{{base_url}}"],
+							"path": ["movimientos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Obtener movimiento por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/movimientos/1",
+							"host": ["{{base_url}}"],
+							"path": ["movimientos", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Obtener movimientos de una cuenta",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/movimientos/cuenta/1",
+							"host": ["{{base_url}}"],
+							"path": ["movimientos", "cuenta", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Crear movimiento - CRÉDITO (Depósito)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cuentaId\": 1,\n  \"tipoMovimiento\": \"Depósito\",\n  \"valor\": 500\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/movimientos",
+							"host": ["{{base_url}}"],
+							"path": ["movimientos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Crear movimiento - DÉBITO (Retiro)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cuentaId\": 1,\n  \"tipoMovimiento\": \"Retiro\",\n  \"valor\": -200\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/movimientos",
+							"host": ["{{base_url}}"],
+							"path": ["movimientos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6. TEST - Saldo Insuficiente (debe fallar)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cuentaId\": 3,\n  \"tipoMovimiento\": \"Retiro\",\n  \"valor\": -100\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/movimientos",
+							"host": ["{{base_url}}"],
+							"path": ["movimientos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7. TEST - Límite Diario $1000 - Retiro 1",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cuentaId\": 1,\n  \"tipoMovimiento\": \"Retiro\",\n  \"valor\": -500\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/movimientos",
+							"host": ["{{base_url}}"],
+							"path": ["movimientos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "8. TEST - Límite Diario $1000 - Retiro 2",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cuentaId\": 1,\n  \"tipoMovimiento\": \"Retiro\",\n  \"valor\": -400\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/movimientos",
+							"host": ["{{base_url}}"],
+							"path": ["movimientos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9. TEST - Límite Diario Excedido (debe fallar)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cuentaId\": 1,\n  \"tipoMovimiento\": \"Retiro\",\n  \"valor\": -200\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/movimientos",
+							"host": ["{{base_url}}"],
+							"path": ["movimientos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "10. Eliminar movimiento",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/movimientos/99",
+							"host": ["{{base_url}}"],
+							"path": ["movimientos", "99"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reportes",
+			"item": [
+				{
+					"name": "1. Generar reporte de Marianela Montalvo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reportes?clienteId=2&fechaInicio=2024-10-01&fechaFin=2024-11-30",
+							"host": ["{{base_url}}"],
+							"path": ["reportes"],
+							"query": [
+								{
+									"key": "clienteId",
+									"value": "2"
+								},
+								{
+									"key": "fechaInicio",
+									"value": "2024-10-01"
+								},
+								{
+									"key": "fechaFin",
+									"value": "2024-11-30"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Generar reporte de Jose Lema",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reportes?clienteId=1&fechaInicio=2024-10-01&fechaFin=2024-11-30",
+							"host": ["{{base_url}}"],
+							"path": ["reportes"],
+							"query": [
+								{
+									"key": "clienteId",
+									"value": "1"
+								},
+								{
+									"key": "fechaInicio",
+									"value": "2024-10-01"
+								},
+								{
+									"key": "fechaFin",
+									"value": "2024-11-30"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Reporte en PDF (preparado para futuro)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reportes/pdf?clienteId=2&fechaInicio=2024-10-01&fechaFin=2024-11-30",
+							"host": ["{{base_url}}"],
+							"path": ["reportes", "pdf"],
+							"query": [
+								{
+									"key": "clienteId",
+									"value": "2"
+								},
+								{
+									"key": "fechaInicio",
+									"value": "2024-10-01"
+								},
+								{
+									"key": "fechaFin",
+									"value": "2024-11-30"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000/api",
+			"type": "string"
+		}
+	]
+}

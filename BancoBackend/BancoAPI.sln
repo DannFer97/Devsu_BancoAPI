@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BancoAPI.Domain", "BancoAPI.Domain\BancoAPI.Domain.csproj", "{255C2E86-B608-4D78-B5E9-CFA4A9E1D39F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BancoAPI.Infrastructure", "BancoAPI.Infrastructure\BancoAPI.Infrastructure.csproj", "{6587AFB7-1BB8-43D6-BDEE-1FA24BBF9ED1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BancoAPI.Application", "BancoAPI.Application\BancoAPI.Application.csproj", "{56ADFA63-104D-4365-863C-DE301C42FF1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BancoAPI.API", "BancoAPI.API\BancoAPI.API.csproj", "{2C0C5FA1-EF3E-4FCF-AFD0-9B6808A7650A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BancoAPI.Tests", "BancoAPI.Tests\BancoAPI.Tests.csproj", "{AF2E61AA-2996-4B05-A80D-299D710DD7C0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{255C2E86-B608-4D78-B5E9-CFA4A9E1D39F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{255C2E86-B608-4D78-B5E9-CFA4A9E1D39F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{255C2E86-B608-4D78-B5E9-CFA4A9E1D39F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{255C2E86-B608-4D78-B5E9-CFA4A9E1D39F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6587AFB7-1BB8-43D6-BDEE-1FA24BBF9ED1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6587AFB7-1BB8-43D6-BDEE-1FA24BBF9ED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6587AFB7-1BB8-43D6-BDEE-1FA24BBF9ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6587AFB7-1BB8-43D6-BDEE-1FA24BBF9ED1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56ADFA63-104D-4365-863C-DE301C42FF1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56ADFA63-104D-4365-863C-DE301C42FF1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56ADFA63-104D-4365-863C-DE301C42FF1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56ADFA63-104D-4365-863C-DE301C42FF1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C0C5FA1-EF3E-4FCF-AFD0-9B6808A7650A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C0C5FA1-EF3E-4FCF-AFD0-9B6808A7650A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C0C5FA1-EF3E-4FCF-AFD0-9B6808A7650A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C0C5FA1-EF3E-4FCF-AFD0-9B6808A7650A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF2E61AA-2996-4B05-A80D-299D710DD7C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF2E61AA-2996-4B05-A80D-299D710DD7C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF2E61AA-2996-4B05-A80D-299D710DD7C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF2E61AA-2996-4B05-A80D-299D710DD7C0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

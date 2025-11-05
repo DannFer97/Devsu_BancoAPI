@@ -1,0 +1,53 @@
+# Directorios de build
+**/bin/
+**/obj/
+**/out/
+
+# Archivos de Visual Studio
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Archivos de usuario
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Documentación
+*.md
+README.md
+
+# Logs
+logs/
+*.log
+
+# Archivos temporales
+tmp/
+temp/
+
+# Node modules (si hay Angular)
+**/node_modules/
+**/npm-debug.log
+
+# Tests
+**/TestResults/
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/

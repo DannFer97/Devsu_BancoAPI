@@ -1,0 +1,220 @@
+<!-- 
+     VISTA DE MOVIMIENTOS
+     Interfaz para gestión de Movimientos
+     CON VALIDACIONES CRÍTICAS VISIBLES
+     -->
+
+<div class="movimientos-page">
+    <!-- Título de la página -->
+    <h1 class="page-title">Movimientos</h1>
+
+    <!-- Mensajes de éxito o error (MUY VISIBLES) -->
+    <div ng-if="mensaje" class="alert alert-success">
+         {{ mensaje }}
+    </div>
+    <div ng-if="error" class="alert alert-error">
+        {{ error }}
+    </div>
+
+    <!-- Barra de acciones -->
+    <div class="actions-bar">
+        <!-- Campo de búsqueda rápida -->
+        <div class="search-box">
+            <input 
+                type="text" 
+                ng-model="busqueda" 
+                placeholder="Buscar por tipo, cuenta o cliente..."
+                ng-change="buscarMovimientos()">
+        </div>
+
+        <!-- Botón Nuevo (amarillo según mockup) -->
+        <button class="btn btn-new" ng-click="abrirModalNuevo()">
+            Nuevo
+        </button>
+    </div>
+
+    <!-- Loading spinner -->
+    <div ng-if="loading && !modalActivo" class="loading">
+        <div class="spinner"></div>
+        <p>Cargando...</p>
+    </div>
+
+    <!-- Tabla de movimientos -->
+    <div class="table-container" ng-if="!loading || modalActivo">
+        <table ng-if="movimientosFiltrados.length > 0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Fecha</th>
+                    <th>Cuenta</th>
+                    <th>Cliente</th>
+                    <th>Tipo Movimiento</th>
+                    <th>Valor</th>
+                    <th>Saldo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="movimiento in movimientosFiltrados">
+                    <td>{{ movimiento.movimientoId }}</td>
+                    <td>{{ movimiento.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td>{{ obtenerNumeroCuenta(movimiento.cuentaId) }}</td>
+                    <td>{{ obtenerNombreCliente(movimiento.cuentaId) }}</td>
+                    <td>{{ movimiento.tipoMovimiento }}</td>
+                    <td ng-class="esCredito(movimiento.valor) ? 'text-success' : 'text-danger'">
+                        <strong>{{ movimiento.valor > 0 ? '+' : '' }}${{ movimiento.valor | number:2 }}</strong>
+                    </td>
+                    <td>${{ movimiento.saldo | number:2 }}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" ng-click="eliminarMovimiento(movimiento)">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Mensaje cuando no hay datos -->
+        <div ng-if="movimientosFiltrados.length === 0" class="no-data">
+            <p ng-if="busqueda">No se encontraron movimientos con el término: "{{ busqueda }}"</p>
+            <p ng-if="!busqueda">No hay movimientos registrados. Haga clic en "Nuevo" para agregar uno.</p>
+        </div>
+    </div>
+
+    <!-- Modal para crear movimiento -->
+    <div class="modal" ng-class="{'active': modalActivo}">
+        <div class="modal-content">
+            <!-- Header del modal -->
+            <div class="modal-header">
+                <h2>Nuevo Movimiento</h2>
+                <button class="modal-close" ng-click="cerrarModal()">&times;</button>
+            </div>
+
+            <!-- Body del modal -->
+            <div class="modal-body">
+                <!-- Mensajes dentro del modal (validaciones críticas) -->
+                <div ng-if="error" class="alert alert-error">
+                    {{ error }}
+                </div>
+
+                <!-- Información importante -->
+                <div class="alert alert-info" style="background-color: #d6eaf8; border-color: #3498db; color: #1f618d;">
+                    <strong>Importante:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>El sistema aplicará automáticamente el signo según el tipo de movimiento</li>
+                        <li>Límite diario de retiros: <strong>$1,000</strong></li>
+                    </ul>
+                </div>
+
+                <!-- Formulario -->
+                <form name="movimientoForm" novalidate>
+                    <!-- Cuenta -->
+                    <div class="form-group">
+                        <label for="cuentaId">Cuenta *</label>
+                        <select 
+                            id="cuentaId" 
+                            name="cuentaId"
+                            ng-model="nuevoMovimiento.cuentaId" 
+                            ng-change="onCuentaChange()"
+                            required>
+                            <option value="">-- Seleccione una cuenta --</option>
+                            <option ng-repeat="cuenta in cuentas" value="{{ cuenta.cuentaId }}">
+                                {{ cuenta.numeroCuenta }} - {{ obtenerNombreCliente(cuenta.cuentaId) }} ({{ cuenta.tipoCuenta }})
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Información de la cuenta seleccionada -->
+                    <div ng-if="infoCuenta" class="alert alert-info" style="background-color: #e8f8f5; border-color: #27ae60; color: #145a32;">
+                        <strong> Información de la cuenta:</strong>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li>Cliente: <strong>{{ infoCuenta.nombreCliente }}</strong></li>
+                            <li>Número: <strong>{{ infoCuenta.numeroCuenta }}</strong></li>
+                            <li>Tipo: <strong>{{ infoCuenta.tipoCuenta }}</strong></li>
+                            <li>Saldo Actual: <strong>${{ infoCuenta.saldoActual | number:2 }}</strong></li>
+                        </ul>
+                    </div>
+
+                    <!-- Tipo de Movimiento -->
+                    <div class="form-group">
+                        <label for="tipoMovimiento">Tipo de Movimiento *</label>
+                        <select 
+                            id="tipoMovimiento" 
+                            name="tipoMovimiento"
+                            ng-model="nuevoMovimiento.tipoMovimiento" 
+                            required>
+                            <option value="">-- Seleccione tipo --</option>
+                            <option value="Deposito">Depósito</option>
+                            <option value="Retiro">Retiro </option>
+                        </select>
+                    </div>
+
+                    <!-- Valor -->
+                    <div class="form-group">
+                        <label for="valor">Valor del Movimiento *</label>
+                        <input
+                            type="number"
+                            id="valor"
+                            name="valor"
+                            ng-model="nuevoMovimiento.valor"
+                            ng-change="onValorChange()"
+                            step="0.01"
+                            min="0.01"
+                            required
+                            placeholder="Ej: 100">
+                        <small style="color: #7f8c8d;">
+                             Ingrese solo el valor sin signo. El sistema lo aplicará automáticamente según el tipo de movimiento.
+                        </small>
+                    </div>
+
+                    <!-- Preview del saldo resultante -->
+                    <div ng-if="infoCuenta && nuevoMovimiento.valor && nuevoMovimiento.tipoMovimiento"
+                         class="alert"
+                         ng-class="saldoCalculado >= 0 ? 'alert-success' : 'alert-warning'"
+                         style="margin-top: 15px;">
+                        <strong> Saldo después del movimiento:</strong>
+                        <div style="font-size: 18px; margin-top: 10px;">
+                            ${{ infoCuenta.saldoActual | number:2 }}
+                            <span ng-if="nuevoMovimiento.tipoMovimiento.toLowerCase().indexOf('deposito') > -1 || nuevoMovimiento.tipoMovimiento.toLowerCase().indexOf('depósito') > -1"
+                                  style="color: #27ae60;">
+                                + ${{ nuevoMovimiento.valor | number:2 }}
+                            </span>
+                            <span ng-if="nuevoMovimiento.tipoMovimiento.toLowerCase().indexOf('retiro') > -1"
+                                  style="color: #e74c3c;">
+                                - ${{ nuevoMovimiento.valor | number:2 }}
+                            </span>
+                            = <strong style="font-size: 22px;">${{ saldoCalculado | number:2 }}</strong>
+                        </div>
+                        <div ng-if="saldoCalculado < 0" style="color: #e74c3c; margin-top: 10px;">
+                             <strong>ADVERTENCIA:</strong> El saldo resultante es negativo. El sistema rechazará esta operación por "Saldo no disponible".
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Footer del modal -->
+            <div class="modal-footer">
+                <button class="btn btn-secondary" ng-click="cerrarModal()">
+                    Cancelar
+                </button>
+                <button 
+                    class="btn btn-success" 
+                    ng-click="guardarMovimiento()"
+                    ng-disabled="loading">
+                    <span ng-if="!loading">Registrar Movimiento</span>
+                    <span ng-if="loading">Procesando...</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos adicionales para movimientos -->
+<style>
+.text-success {
+    color: #27ae60;
+}
+.text-danger {
+    color: #e74c3c;
+}
+</style>
