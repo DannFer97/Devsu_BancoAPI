@@ -14,11 +14,6 @@ namespace BancoAPI.Domain.Entities
     public class Cliente : Persona
     {
 
-        [Required(ErrorMessage = "La contraseña es obligatoria")]
-        [StringLength(100, MinimumLength = 8, ErrorMessage = "La contraseña debe tener al menos 8 caracteres")]
-        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+]).{8,100}$",
-             ErrorMessage = "La contraseña debe tener al menos una mayúscula, un número y un caracter especial")]
-        [DataType(DataType.Password)]
 
         public string Contrasena { get; set; } = string.Empty;
 
