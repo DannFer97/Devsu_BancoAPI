@@ -45,11 +45,8 @@ namespace BancoAPI.Domain.Entities
         public int ClienteId { get; set; }
 
         
-        public virtual Cliente? Cliente { get; set; }
-
-        [DataType(DataType.DateTime)]
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
-
+        public virtual Cliente Cliente { get; set; } = null!;
+      
 
         [DataType(DataType.DateTime)]
         public DateTime? FechaActualizacion { get; set; }

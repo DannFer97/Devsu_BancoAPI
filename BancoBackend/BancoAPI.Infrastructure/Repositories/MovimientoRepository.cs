@@ -22,7 +22,7 @@ namespace BancoAPI.Infrastructure.Repositories
         {
             return await _dbSet
                 .Include(m => m.Cuenta)
-                    .ThenInclude(c => c.Cliente)
+                    .ThenInclude(c => c!.Cliente)
                 .Where(m => m.CuentaId == cuentaId &&
                            m.Fecha >= fechaInicio &&
                            m.Fecha <= fechaFin)
@@ -58,8 +58,8 @@ namespace BancoAPI.Infrastructure.Repositories
         {
             return await _dbSet
                 .Include(m => m.Cuenta)
-                    .ThenInclude(c => c.Cliente)
-                .Where(m => m.Cuenta.ClienteId == clienteId &&
+                    .ThenInclude(c => c!.Cliente)
+                .Where(m => m.Cuenta!.ClienteId == clienteId &&
                            m.Fecha >= fechaInicio &&
                            m.Fecha <= fechaFin)
                 .OrderBy(m => m.Fecha)
@@ -93,6 +93,27 @@ namespace BancoAPI.Infrastructure.Repositories
                 .OrderByDescending(m => m.Fecha)
                 .ThenByDescending(m => m.MovimientoId)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<Dictionary<int, decimal>> GetUltimosSaldosPorCuentasAsync(IEnumerable<int> cuentaIds)
+        {
+            var ids = cuentaIds.ToList();
+            if (!ids.Any())
+                return new Dictionary<int, decimal>();
+                
+            var ultimosSaldos = await _dbSet
+                .Where(m => cuentaIds.Contains(m.CuentaId))
+                .GroupBy(m => m.CuentaId)
+                .Select(g => new
+                {
+                    CuentaId = g.Key,
+                    UltimoSaldo = g.OrderByDescending(m => m.Fecha)
+                                  .ThenByDescending(m => m.MovimientoId)
+                                  .FirstOrDefault()!.Saldo
+                })
+                .ToListAsync();
+
+            return ultimosSaldos.ToDictionary(x => x.CuentaId, x => x.UltimoSaldo);
         }
     }
 }

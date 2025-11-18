@@ -35,7 +35,7 @@ namespace BancoAPI.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configuración de herencia: Table-per-Type (TPT) - Mejores prácticas EF Core
+            // Configuración de herencia: Table-per-Type (TPT) 
             // La tabla Personas contiene la PK y propiedades base
             // La tabla Clientes comparte la misma PK como FK hacia Personas
             modelBuilder.Entity<Persona>()

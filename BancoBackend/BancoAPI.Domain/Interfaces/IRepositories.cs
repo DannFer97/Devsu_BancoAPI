@@ -68,5 +68,7 @@ namespace BancoAPI.Domain.Interfaces
         /// Obtiene el último movimiento de una cuenta (para obtener saldo actual)
 
         Task<Movimiento?> GetUltimoMovimientoPorCuentaAsync(int cuentaId);
+
+        Task<Dictionary<int, decimal>> GetUltimosSaldosPorCuentasAsync(IEnumerable<int> cuentaIds);
     }
 }

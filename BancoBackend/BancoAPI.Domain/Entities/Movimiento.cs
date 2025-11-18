@@ -41,7 +41,7 @@ namespace BancoAPI.Domain.Entities
         [ForeignKey(nameof(Cuenta))]
         public int CuentaId { get; set; }
 
-        public virtual Cuenta? Cuenta { get; set; }
+        public virtual Cuenta Cuenta { get; set; }= null!;
     }
 
     public enum TipoMovimientoEnum

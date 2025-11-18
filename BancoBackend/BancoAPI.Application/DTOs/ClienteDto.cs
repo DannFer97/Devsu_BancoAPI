@@ -39,7 +39,7 @@ namespace BancoAPI.Application.DTOs
 
         [Required(ErrorMessage = "La contraseña es obligatoria")]
         [StringLength(100, MinimumLength = 8, ErrorMessage = "La contraseña debe tener al menos 8 caracteres")]
-        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+]).{6,100}$",
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+]).{8,100}$",
               ErrorMessage = "La contraseña debe tener al menos una mayúscula, un número y un carácter especial")]
         [DataType(DataType.Password)]
         public string Contrasena { get; set; } = string.Empty;
@@ -69,7 +69,7 @@ namespace BancoAPI.Application.DTOs
         public string? Telefono { get; set; }
 
         [StringLength(100, MinimumLength = 8, ErrorMessage = "La contraseña debe tener al menos 8 caracteres")]
-        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+]).{6,100}$",
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+]).{8,100}$",
             ErrorMessage = "La contraseña debe tener al menos una mayúscula, un número y un carácter especial")]
         public string? Contrasena { get; set; }
 
@@ -81,7 +81,7 @@ namespace BancoAPI.Application.DTOs
     /// </summary>
     public class ClienteDto
     {
-        public int ClienteId { get; set; }  // PersonaId mapeado como ClienteId para compatibilidad
+        public int ClienteId { get; set; }  
         public string Nombre { get; set; } = string.Empty;
         public string Genero { get; set; } = string.Empty;
         public int Edad { get; set; }

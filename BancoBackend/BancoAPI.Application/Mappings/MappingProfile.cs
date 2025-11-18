@@ -19,7 +19,8 @@ namespace BancoAPI.Application.Mappings
 
             // Mapeos de Cliente
             CreateMap<Cliente, ClienteDto>()
-                .ForMember(dest => dest.ClienteId, opt => opt.MapFrom(src => src.PersonaId))  // Mapear PersonaId a ClienteId
+                .ForMember(dest => dest.ClienteId,
+                    opt => opt.MapFrom(src => src.PersonaId))  // Mapear PersonaId a ClienteId
                 .ForMember(dest => dest.Cuentas,
                     opt => opt.MapFrom(src => src.Cuentas));
 

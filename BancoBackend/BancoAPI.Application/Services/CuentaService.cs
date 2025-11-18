@@ -31,15 +31,19 @@ namespace BancoAPI.Application.Services
             var cuentas = await _unitOfWork.Cuentas.GetAllAsync();
             var cuentasDto = _mapper.Map<IEnumerable<CuentaDto>>(cuentas).ToList();
 
-            // Calcular el saldo actual de cada cuenta
+            if (!cuentasDto.Any())
+                return cuentasDto;
+
+            var cuentaIds = cuentasDto.Select(c => c.CuentaId).ToList();
+            var ultimosSaldos = await _unitOfWork.Movimientos
+                .GetUltimosSaldosPorCuentasAsync(cuentaIds);
+
+            // Asignar el saldo actual de cada cuenta
             foreach (var cuentaDto in cuentasDto)
             {
-                // Obtener el saldo actual del último movimiento
-                var ultimoMovimiento = await _unitOfWork.Movimientos
-                    .GetUltimoMovimientoPorCuentaAsync(cuentaDto.CuentaId);
-
-                // Si hay movimientos, usar el saldo del último movimiento; si no, usar saldo inicial
-                cuentaDto.SaldoActual = ultimoMovimiento?.Saldo ?? cuentaDto.SaldoInicial;
+                cuentaDto.SaldoActual = ultimosSaldos.TryGetValue(cuentaDto.CuentaId, out var saldo)
+                    ? saldo
+                    : cuentaDto.SaldoInicial;
             }
 
             return cuentasDto;
@@ -59,7 +63,9 @@ namespace BancoAPI.Application.Services
                 .GetUltimoMovimientoPorCuentaAsync(id);
 
             // Si hay movimientos, usar el saldo del último movimiento; si no, usar saldo inicial
-            cuentaDto.SaldoActual = ultimoMovimiento?.Saldo ?? cuenta.SaldoInicial;
+            cuentaDto.SaldoActual = ultimoMovimiento != null
+                ? ultimoMovimiento.Saldo
+                : cuenta.SaldoInicial;
 
             return cuentaDto;
         }

@@ -21,10 +21,10 @@ namespace BancoAPI.Domain.Interfaces
         /// Obtiene una entidad por su ID
         Task<T?> GetByIdAsync(int id);
 
-        /// Busca entidades que cumplan con un predicado (usando lambdas) ⭐
+        /// Busca entidades que cumplan 
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
 
-        /// Obtiene la primera entidad que cumpla con un predicado
+        /// Obtiene la primera entidad que cumplan
         Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
 
         /// Agrega una nueva entidad
@@ -36,10 +36,10 @@ namespace BancoAPI.Domain.Interfaces
         /// Elimina una entidad
         Task DeleteAsync(T entity);
 
-        /// Verifica si existe alguna entidad que cumpla con un predicado
+        /// Verifica si existe alguna entidad que cumplan
         Task<bool> AnyAsync(Expression<Func<T, bool>> predicate);
 
-        /// Cuenta cuántas entidades cumplen con un predicado
+        /// Cuenta cuántas entidades cumplan
         Task<int> CountAsync(Expression<Func<T, bool>> predicate);
     }
 }

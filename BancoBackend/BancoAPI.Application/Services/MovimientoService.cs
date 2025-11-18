@@ -74,10 +74,10 @@ namespace BancoAPI.Application.Services
                 throw new OperacionInvalidaException("La cuenta no está activa");
 
             // 2. Calcular saldo actual
-            var saldoActual = cuenta.Movimientos
-                .OrderByDescending(m => m.Fecha)
-                .Select(m => m.Saldo)
-                .FirstOrDefault(cuenta.SaldoInicial);
+            var ultimoMovimiento = await _unitOfWork.Movimientos
+                .GetUltimoMovimientoPorCuentaAsync(movimientoDto.CuentaId);
+
+            var saldoActual = ultimoMovimiento?.Saldo ?? cuenta.SaldoInicial;
 
 
             // 3. Validar tipo de movimiento y valores según documento:
@@ -144,12 +144,10 @@ namespace BancoAPI.Application.Services
                 throw new EntidadNoEncontradaException("Movimiento", id);
 
             // Validar que sea el último movimiento de la cuenta
-            var cuenta = await _unitOfWork.Cuentas.GetCuentaConMovimientosAsync(movimiento.CuentaId);
-            var ultimoMovimiento = cuenta!.Movimientos
-                .OrderByDescending(m => m.Fecha)
-                .First();
+            var ultimoMovimiento = await _unitOfWork.Movimientos
+                .GetUltimoMovimientoPorCuentaAsync(movimiento.CuentaId);
 
-            if (movimiento.MovimientoId != ultimoMovimiento.MovimientoId)
+            if (movimiento.MovimientoId != ultimoMovimiento?.MovimientoId)
                 throw new OperacionInvalidaException(
                     "Solo se puede eliminar el último movimiento de la cuenta");
 
@@ -179,11 +177,11 @@ namespace BancoAPI.Application.Services
             var estadosCuenta = movimientos.Select(m => new EstadoCuentaDto
             {
                 Fecha = m.Fecha,
-                Cliente = m.Cuenta.Cliente.Nombre,
-                NumeroCuenta = m.Cuenta.NumeroCuenta,
-                Tipo = m.Cuenta.TipoCuenta.ToString(),
-                SaldoInicial = m.Cuenta.SaldoInicial,
-                Estado = m.Cuenta.Estado,
+                Cliente = m.Cuenta?.Cliente?.Nombre??"",
+                NumeroCuenta = m.Cuenta?.NumeroCuenta??"",
+                Tipo = m.Cuenta?.TipoCuenta.ToString()??"",
+                SaldoInicial = m.Cuenta?.SaldoInicial?? 0,
+                Estado = m.Cuenta?.Estado?? false,
                 Movimiento = m.Valor,
                 SaldoDisponible = m.Saldo
             }).ToList();

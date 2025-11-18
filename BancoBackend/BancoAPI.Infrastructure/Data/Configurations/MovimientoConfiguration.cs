@@ -55,6 +55,7 @@ namespace BancoAPI.Infrastructure.Data.Configurations
             builder.HasOne(m => m.Cuenta)
                 .WithMany(c => c.Movimientos)
                 .HasForeignKey(m => m.CuentaId)
+                .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

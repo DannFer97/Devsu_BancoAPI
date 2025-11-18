@@ -91,26 +91,7 @@ namespace BancoAPI.Application.Services
                 throw new EntidadNoEncontradaException("Cliente", id);
 
             // Actualizar solo los campos que no son null 
-            if (clienteDto.Nombre != null)
-                cliente.Nombre = clienteDto.Nombre;
-
-            if (clienteDto.Genero != null)
-                cliente.Genero = clienteDto.Genero;
-
-            if (clienteDto.Edad.HasValue)
-                cliente.Edad = clienteDto.Edad.Value;
-
-            if (clienteDto.Direccion != null)
-                cliente.Direccion = clienteDto.Direccion;
-
-            if (clienteDto.Telefono != null)
-                cliente.Telefono = clienteDto.Telefono;
-
-            if (clienteDto.Contrasena != null)
-                cliente.Contrasena = clienteDto.Contrasena;
-
-            if (clienteDto.Estado.HasValue)
-                cliente.Estado = clienteDto.Estado.Value;
+            _mapper.Map(clienteDto, cliente);
            
 
             await _unitOfWork.Clientes.UpdateAsync(cliente);

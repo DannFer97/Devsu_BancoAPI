@@ -22,6 +22,7 @@ namespace BancoAPI.Infrastructure.Data.Configurations
             // Clave primaria
             builder.HasKey(c => c.CuentaId);
 
+            
             // Propiedades
             builder.Property(c => c.NumeroCuenta)
                 .IsRequired()
@@ -54,6 +55,7 @@ namespace BancoAPI.Infrastructure.Data.Configurations
                 .WithMany(cl => cl.Cuentas)
                 .HasForeignKey(c => c.ClienteId)
                 .HasPrincipalKey(cl => cl.PersonaId)  
+                .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(c => c.Movimientos)

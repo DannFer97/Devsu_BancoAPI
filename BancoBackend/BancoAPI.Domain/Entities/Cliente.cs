@@ -16,15 +16,14 @@ namespace BancoAPI.Domain.Entities
 
         [Required(ErrorMessage = "La contraseña es obligatoria")]
         [StringLength(100, MinimumLength = 8, ErrorMessage = "La contraseña debe tener al menos 8 caracteres")]
-        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+]).{6,100}$",
-             ErrorMessage = "La contraseña debe tener al menos una mayúscula, un número y un carácter especial")]
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+]).{8,100}$",
+             ErrorMessage = "La contraseña debe tener al menos una mayúscula, un número y un caracter especial")]
         [DataType(DataType.Password)]
 
         public string Contrasena { get; set; } = string.Empty;
 
         public bool Estado { get; set; } = true;
 
-        [InverseProperty("Cliente")]
         public virtual ICollection<Cuenta> Cuentas { get; set; } = new List<Cuenta>();
 
     }
